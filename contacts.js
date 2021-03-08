@@ -1,6 +1,7 @@
 const fs = require("fs");
 const fsp = require("fs").promises;
 const path = require("path");
+const shortid = require("shortid");
 
 const contactsPath = path.join(__dirname, "./db/contacts.json");
 
@@ -12,17 +13,15 @@ async function listContacts() {
 
 async function getContactById(contactId) {
   const data = await fsp.readFile(contactsPath, "utf8");
-  const findedData = await JSON.parse(data).find(
-    (user) => user.id === contactId
-  );
+  const findedData = JSON.parse(data).find((user) => user.id === contactId);
   console.table(findedData);
 }
 
 async function removeContact(contactId) {
   const data = await fsp.readFile(contactsPath, "utf8");
-  const arr = await JSON.parse(data);
+  const arr = JSON.parse(data);
   if (arr.find((user) => user.id === contactId)) {
-    const filtredData = await arr.filter((user) => user.id !== contactId);
+    const filtredData = arr.filter((user) => user.id !== contactId);
     await fsp.writeFile(contactsPath, JSON.stringify(filtredData), (err) => {
       if (err) {
         console.warn(err);
@@ -37,11 +36,11 @@ async function removeContact(contactId) {
 
 async function addContact(name, email, phone) {
   const data = await fsp.readFile(contactsPath, "utf8");
-  const arr = await JSON.parse(data);
-  const id = arr[arr.length - 1]["id"] + 1;
+  const arrContacts = JSON.parse(data);
+  const id = shortid.generate();
   const newContact = { id, name, email, phone };
-  const contactsWithNew = [...JSON.parse(data), newContact];
-  await fsp.writeFile(contactsPath, JSON.stringify(contactsWithNew), (err) => {
+  const contactsWithNew = JSON.stringify([...arrContacts, newContact]);
+  await fsp.writeFile(contactsPath, contactsWithNew, (err) => {
     if (err) {
       console.warn(err);
     }
