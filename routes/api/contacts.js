@@ -43,14 +43,27 @@ router.get("/:contactId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const contact = await Contacts.addContact(req.body);
-    return res.status(201).json({
-      status: "success",
-      code: 201,
-      data: {
-        contact,
-      },
-    });
+    const reqParameters = ["name", "email", "phone"];
+    if (!req.body.name || !req.body.email || !req.body.phone) {
+      const errorMessage = reqParameters
+        .filter((item) => !Object.keys(req.body).includes(item))
+        .reduce(
+          (acc, string) => `${acc} missing required ${string} parameter`,
+          ""
+        );
+      res.status(400).json({
+        message: errorMessage,
+      });
+    } else {
+      const contact = await Contacts.addContact(req.body);
+      res.json({
+        status: "success",
+        code: 201,
+        data: {
+          contact,
+        },
+      });
+    }
   } catch (error) {
     next(error);
   }

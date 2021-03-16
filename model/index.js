@@ -24,16 +24,14 @@ const getContactById = async (contactId) => {
 
 const removeContact = async (contactId) => {
   try {
-    const deletedContact = getContactById(contactId);
-    if (!deletedContact) return;
-
     const contacts = await listContacts();
-    const filteredContacts = contacts.filter((contact) => {
-      return contact.id !== contactId;
-    });
-
-    const strigifiedArr = JSON.stringify(filteredContacts, null, 2);
-    await fs.writeFile(contactsPath, strigifiedArr, "utf8");
+    const deletedContact = contacts.find(
+      ({ id }) => id.toString() === contactId
+    );
+    const filteredContacts = JSON.stringify(
+      contacts.filter(({ id }) => id.toString() !== contactId)
+    );
+    await fs.writeFile(contactsPath, filteredContacts, "utf8");
     return deletedContact;
   } catch (error) {
     console.log(error);
