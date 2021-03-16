@@ -42,15 +42,66 @@ router.get("/:contactId", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  res.json({ message: "template message" });
+  try {
+    const contact = await Contacts.addContact(req.body);
+    return res.status(201).json({
+      status: "success",
+      code: 201,
+      deta: {
+        contact,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.delete("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+  const { contactId } = req.params;
+  try {
+    const contact = await Contacts.removeContact(contactId);
+    if (contact) {
+      return res.json({
+        status: "success",
+        code: 200,
+        data: {
+          contact,
+        },
+      });
+    } else {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        data: "Not Found",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.patch("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+  const { contactId } = req.params;
+  try {
+    const contact = await Contacts.updateContact(contactId, req.body);
+    if (contact) {
+      return res.json({
+        status: "success",
+        code: 200,
+        data: {
+          contact,
+        },
+      });
+    } else {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        data: "Not Found",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
