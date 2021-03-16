@@ -1,4 +1,3 @@
-const { constants } = require("buffer");
 const fs = require("fs/promises");
 const path = require("path");
 const shortid = require("shortid");
@@ -30,7 +29,7 @@ const removeContact = async (contactId) => {
 
     const contacts = await listContacts();
     const filteredContacts = contacts.filter((contact) => {
-      return contact.id != contactId;
+      return contact.id !== contactId;
     });
 
     const strigifiedArr = JSON.stringify(filteredContacts, null, 2);
@@ -47,7 +46,7 @@ const addContact = async (body) => {
     const newContact = { id: shortid.generate(), ...body };
     const contactsArr = [...contacts, newContact];
 
-    const strigifiedArr = JSON.stringify(filteredContacts, null, 2);
+    const strigifiedArr = JSON.stringify(contactsArr, null, 2);
     await fs.writeFile(contactsPath, strigifiedArr, "utf8");
     return newContact;
   } catch (error) {
@@ -62,7 +61,7 @@ const updateContact = async (contactId, body) => {
     if (index === -1) return;
     contacts[index] = { ...contacts[index], ...body };
 
-    const strigifiedArr = JSON.stringify(filteredContacts, null, 2);
+    const strigifiedArr = JSON.stringify(contacts, null, 2);
     await fs.writeFile(contactsPath, strigifiedArr, "utf8");
     return contacts[index];
   } catch (error) {
