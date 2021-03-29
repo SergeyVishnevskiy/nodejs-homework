@@ -5,11 +5,11 @@ const { SUBSCRIPTION_TYPE } = require("../helpers/constants");
 const contactSchema = new Schema({
   name: {
     type: String,
-    require: true,
+    required: true,
   },
   email: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
     validate: {
       validator: (v) => /\S+@\S+\.\S+/.test(v),
@@ -18,7 +18,7 @@ const contactSchema = new Schema({
   },
   phone: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
     validate: {
       validator: function (v) {
